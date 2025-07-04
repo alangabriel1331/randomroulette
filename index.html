@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>LA RULETA DE LA MUERTE</title>
+  <style>
+    body {
+      background: radial-gradient(circle at center, #1e0033, #000);
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    #mainContainer {
+      display: flex;
+      gap: 40px;
+    }
+    #configColumn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    #wheelContainer {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #wheel {
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 5px solid #fff;
+      position: relative;
+      transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+      overflow: hidden;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+    #pointerRight {
+      width: 0;
+      height: 0;
+      border-top: 20px solid transparent;
+      border-bottom: 20px solid transparent;
+      border-left: 30px solid gold;
+      position: absolute;
+      right: -30px;
+      top: 50%;
+      transform: translateY(-50%) rotate(180deg);
+      filter: drop-shadow(0 0 5px gold);
+    }
+    #logoCenter {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: 12px;
+      text-align: center;
+    }
+    #controls {
+      margin-top: 20px;
+    }
+    input, button {
+      margin: 5px;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+    }
+    input#lives {
+      width: 60px;
+    }
+    button:hover {
+      cursor: pointer;
+      background-color: #5a2ea6;
+      color: white;
+    }
+    #spinButton {
+      margin-top: 20px;
+      padding: 15px 30px;
+      font-size: 20px;
+      font-weight: bold;
+      background-color: crimson;
+      color: white;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+    }
+    #spinButton:hover {
+      background-color: darkred;
+    }
+  </style>
+</head>
+<body>
+  <h1>💀 LA RULETA DE LA MUERTE 💀</h1>
+  <button id="spinButton" onclick="spinWheel()">🎯 GIRAR</button>
+  <div id="mainContainer">
+    <div id="configColumn">
+      <div id="controls">
+        <h3>AGREGAR SACRIFICIOS</h3>
+        <input type="text" id="username" placeholder="Nombre del jugador">
+        <input type="number" id="lives" placeholder="Vidas" min="1" value="1">
+        <button onclick="addUser()">Sentenciar</button>
+        <h3>CONFIGURACIONES:</h3>
+        <h4>Modo de elección:</h4>
+        <label><input type="radio" name="modeOption" value="first" checked> Gana el primero</label><br>
+        <label><input type="radio" name="modeOption" value="sudden"> Muerte Súbita</label><br>
+        <h4>Reordenar cada:</h4>
+        <label><input type="radio" name="shuffleOption" value="5" checked> 5 tiradas</label><br>
+        <label><input type="radio" name="shuffleOption" value="10"> 10 tiradas</label><br>
+        <label><input type="radio" name="shuffleOption" value="custom"> Personalizado
+          <input type="number" id="customShuffle" min="1" value="1" style="width: 60px;">
+        </label><br>
+        <button onclick="shuffleUsers()">🔀 Reordenar jugadores</button>
+      </div>
+    </div>
+    <div id="wheelContainer">
+      <div id="wheel">
+        <canvas id="wheelCanvas" width="500" height="500"></canvas>
+        <div id="logoCenter">LOGO</div>
+      </div>
+      <div id="pointerRight"></div>
+    </div>
+  </div>
+  <script>
+    let users = [];
+    let angle = 0;
+    let spinCount = 0;
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const colors = ['#6f42c1', '#8e44ad', '#5dade2', '#48c9b0', '#f39c12', '#d35400'];
+
+    function getSafeColor(index, prevColor) {
+      let attempts = 0;
+      let color;
+      do {
+        color = colors[Math.floor(Math.random() * colors.length)];
+        attempts++;
+      } while (color === prevColor && attempts < 10);
+      return color;
+    }
+
+    function addUser() {
+      const name = document.getElementById('username').value.trim();
+      const lives = parseInt(document.getElementById('lives').value);
+      if (name && lives > 0) {
+        users.push({ name, lives, originalLives: lives });
+        drawWheel();
+        document.getElementById('username').value = '';
+      }
+    }
+
+    function drawHearts(user) {
+      let hearts = '';
+      for (let i = 0; i < user.originalLives; i++) {
+        hearts += i < user.lives ? '❤️' : '🖤';
+      }
+      return hearts;
+    }
+
+    function drawWheel() {
+      const numSegments = users.length;
+      if (numSegments === 0) return;
+      const anglePerSegment = 2 * Math.PI / numSegments;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      let prevColor = null;
+      for (let i = 0; i < numSegments; i++) {
+        const startAngle = i * anglePerSegment;
+        const endAngle = startAngle + anglePerSegment;
+        const color = getSafeColor(i, prevColor);
+        prevColor = color;
+
+        ctx.beginPath();
+        ctx.moveTo(250, 250);
+        ctx.arc(250, 250, 250, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(250, 250);
+        ctx.rotate(startAngle + anglePerSegment / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = '#fff';
+        ctx.font = "14px Arial";
+        const hearts = drawHearts(users[i]);
+        ctx.fillText(`${users[i].name} ${hearts}`, 230, 5);
+        ctx.restore();
+      }
+    }
+
+    function shuffleUsers() {
+      for (let i = users.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [users[i], users[j]] = [users[j], users[i]];
+      }
+      drawWheel();
+    }
+
+    function getShuffleInterval() {
+      const selected = document.querySelector('input[name="shuffleOption"]:checked').value;
+      if (selected === 'custom') {
+        return parseInt(document.getElementById('customShuffle').value) || 5;
+      }
+      return parseInt(selected);
+    }
+
+    function spinWheel() {
+      if (users.length === 0) return alert('No hay participantes.');
+      const winnerIndex = Math.floor(Math.random() * users.length);
+      const segmentAngle = 360 / users.length;
+      angle += 360 * 5 + (winnerIndex * segmentAngle) + segmentAngle / 2;
+
+      const wheel = document.getElementById('wheel');
+      wheel.style.transform = `rotate(-${angle}deg)`;
+
+      setTimeout(() => {
+        const winner = users[winnerIndex];
+        const mode = document.querySelector('input[name="modeOption"]:checked').value;
+
+        if (mode === 'first') {
+          alert(`🎉 Ganador: ${winner.name}`);
+        } else {
+          if (winner.lives > 1) {
+            winner.lives--;
+          } else {
+            users.splice(winnerIndex, 1);
+          }
+        }
+
+        spinCount++;
+        if (spinCount % getShuffleInterval() === 0) {
+          shuffleUsers();
+        }
+        drawWheel();
+      }, 5200);
+    }
+  </script>
+</body>
+</html>
