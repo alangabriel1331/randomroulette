@@ -1,256 +1,256 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LA RULETA DE LA MUERTE</title>
-  <style>
-    body {
-      background: radial-gradient(circle at center, #1e0033, #000);
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-    #mainContainer {
-      display: flex;
-      gap: 40px;
-    }
-    #configColumn {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    #wheelContainer {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    #wheel {
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      border: 5px solid #fff;
-      position: relative;
-      transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
-      overflow: hidden;
-    }
-    canvas {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-    }
-    #pointerRight {
-      width: 0;
-      height: 0;
-      border-top: 20px solid transparent;
-      border-bottom: 20px solid transparent;
-      border-left: 30px solid gold;
-      position: absolute;
-      right: -30px;
-      top: 50%;
-      transform: translateY(-50%) rotate(180deg);
-      filter: drop-shadow(0 0 5px gold);
-    }
-    #logoCenter {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background-color: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: bold;
-      font-size: 12px;
-      text-align: center;
-    }
-    #controls {
-      margin-top: 20px;
-    }
-    input, button {
-      margin: 5px;
-      padding: 8px;
-      border-radius: 8px;
-      border: none;
-      font-size: 14px;
-    }
-    input#lives {
-      width: 60px;
-    }
-    button:hover {
-      cursor: pointer;
-      background-color: #5a2ea6;
-      color: white;
-    }
-    #spinButton {
-      margin-top: 20px;
-      padding: 15px 30px;
-      font-size: 20px;
-      font-weight: bold;
-      background-color: crimson;
-      color: white;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-    }
-    #spinButton:hover {
-      background-color: darkred;
-    }
-  </style>
+  <!-- Favicon de ruleta -->
+  <link rel="icon" type="image/png" href="sources//images/ruleta.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css?family=Nosifer&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Pirata+One&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>💀 LA RULETA DE LA MUERTE 💀</h1>
-  <button id="spinButton" onclick="spinWheel()">🎯 GIRAR</button>
-  <div id="mainContainer">
-    <div id="configColumn">
-      <div id="controls">
-        <h3>AGREGAR SACRIFICIOS</h3>
-        <input type="text" id="username" placeholder="Nombre del jugador">
-        <input type="number" id="lives" placeholder="Vidas" min="1" value="1">
-        <button onclick="addUser()">Sentenciar</button>
-        <h3>CONFIGURACIONES:</h3>
-        <h4>Modo de elección:</h4>
-        <label><input type="radio" name="modeOption" value="first" checked> Gana el primero</label><br>
-        <label><input type="radio" name="modeOption" value="sudden"> Muerte Súbita</label><br>
-        <h4>Reordenar cada:</h4>
-        <label><input type="radio" name="shuffleOption" value="5" checked> 5 tiradas</label><br>
-        <label><input type="radio" name="shuffleOption" value="10"> 10 tiradas</label><br>
-        <label><input type="radio" name="shuffleOption" value="custom"> Personalizado
-          <input type="number" id="customShuffle" min="1" value="1" style="width: 60px;">
-        </label><br>
-        <button onclick="shuffleUsers()">🔀 Reordenar jugadores</button>
-      </div>
-    </div>
-    <div id="wheelContainer">
-      <div id="wheel">
-        <canvas id="wheelCanvas" width="500" height="500"></canvas>
-        <div id="logoCenter">LOGO</div>
-      </div>
-      <div id="pointerRight"></div>
-    </div>
-  </div>
+    <div id="mainWheelArea" style="height: 100vh; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <div id="wheelArea">
+        <h1 class="nosifer-title">
+          <img src="sources/images/gorc.jpg" class="logo-title" />
+          LA RULETA DE LA <span class="title-keyword muerte" id="titleKeyword">MUERTE</span>
+          <img src="sources/images/gorc.jpg" class="logo-title" />
+        </h1>
+        <div style="display: flex; flex-direction: row; align-items: flex-start; justify-content: center; width: 100%;">
+          <div id="wheelContainer">
+            <div id="wheel">
+              <canvas id="wheelCanvas" width="500" height="500"></canvas>
+              <button onclick="spinWheel()" id="spinButton">
+                <span id="spinIconContainer">
+                  <svg id="spinIcon" width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+                    <g>
+                      <circle cx="19" cy="19" r="16" stroke="white" stroke-width="3" fill="none" opacity="0.18"/>
+                      <path d="M19 6a13 13 0 1 1-9.19 3.81" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+                      <polygon points="7,7 15,7 11,2" fill="white"/>
+                    </g>
+                  </svg>
+                </span>
+              </button>
+  <style>
+    #spinButton.skull {
+      background: #111 !important;
+      color: #fff;
+    }
+    #spinButton.skull #spinIconContainer {
+      display: none;
+    }
+    #spinButton.skull .skull-emoji {
+      display: block !important;
+      font-size: 2.2rem;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      filter: drop-shadow(0 0 6px #000);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    #spinButton .skull-emoji {
+      display: none;
+    }
+    #spinButton.crown {
+      background: #ffe066 !important;
+      color: #b88600;
+    }
+    #spinButton.crown #spinIconContainer {
+      display: none;
+    }
+    #spinButton.crown .crown-emoji {
+      display: block !important;
+      font-size: 2.2rem;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      filter: drop-shadow(0 0 6px #b88600);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    #spinButton .crown-emoji {
+      display: none;
+    }
+  </style>
   <script>
-    let users = [];
-    let angle = 0;
-    let spinCount = 0;
-    const canvas = document.getElementById('wheelCanvas');
-    const ctx = canvas.getContext('2d');
-
-    const colors = ['#6f42c1', '#8e44ad', '#5dade2', '#48c9b0', '#f39c12', '#d35400'];
-
-    function getSafeColor(index, prevColor) {
-      let attempts = 0;
-      let color;
-      do {
-        color = colors[Math.floor(Math.random() * colors.length)];
-        attempts++;
-      } while (color === prevColor && attempts < 10);
-      return color;
-    }
-
-    function addUser() {
-      const name = document.getElementById('username').value.trim();
-      const lives = parseInt(document.getElementById('lives').value);
-      if (name && lives > 0) {
-        users.push({ name, lives, originalLives: lives });
-        drawWheel();
-        document.getElementById('username').value = '';
-      }
-    }
-
-    function drawHearts(user) {
-      let hearts = '';
-      for (let i = 0; i < user.originalLives; i++) {
-        hearts += i < user.lives ? '❤️' : '🖤';
-      }
-      return hearts;
-    }
-
-    function drawWheel() {
-      const numSegments = users.length;
-      if (numSegments === 0) return;
-      const anglePerSegment = 2 * Math.PI / numSegments;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      let prevColor = null;
-      for (let i = 0; i < numSegments; i++) {
-        const startAngle = i * anglePerSegment;
-        const endAngle = startAngle + anglePerSegment;
-        const color = getSafeColor(i, prevColor);
-        prevColor = color;
-
-        ctx.beginPath();
-        ctx.moveTo(250, 250);
-        ctx.arc(250, 250, 250, startAngle, endAngle);
-        ctx.closePath();
-        ctx.fillStyle = color;
-        ctx.fill();
-
-        ctx.save();
-        ctx.translate(250, 250);
-        ctx.rotate(startAngle + anglePerSegment / 2);
-        ctx.textAlign = "right";
-        ctx.fillStyle = '#fff';
-        ctx.font = "14px Arial";
-        const hearts = drawHearts(users[i]);
-        ctx.fillText(`${users[i].name} ${hearts}`, 230, 5);
-        ctx.restore();
-      }
-    }
-
-    function shuffleUsers() {
-      for (let i = users.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [users[i], users[j]] = [users[j], users[i]];
-      }
-      drawWheel();
-    }
-
-    function getShuffleInterval() {
-      const selected = document.querySelector('input[name="shuffleOption"]:checked').value;
-      if (selected === 'custom') {
-        return parseInt(document.getElementById('customShuffle').value) || 5;
-      }
-      return parseInt(selected);
-    }
-
-    function spinWheel() {
-      if (users.length === 0) return alert('No hay participantes.');
-      const winnerIndex = Math.floor(Math.random() * users.length);
-      const segmentAngle = 360 / users.length;
-      angle += 360 * 5 + (winnerIndex * segmentAngle) + segmentAngle / 2;
-
-      const wheel = document.getElementById('wheel');
-      wheel.style.transform = `rotate(-${angle}deg)`;
-
-      setTimeout(() => {
-        const winner = users[winnerIndex];
-        const mode = document.querySelector('input[name="modeOption"]:checked').value;
-
-        if (mode === 'first') {
-          alert(`🎉 Ganador: ${winner.name}`);
+    // Cambia el botón de girar a calavera en modo muerte súbita
+    function setSpinButtonSkull(active) {
+      var btn = document.getElementById('spinButton');
+      var iconContainer = document.getElementById('spinIconContainer');
+      if (!btn || !iconContainer) return;
+      if (active) {
+        btn.classList.add('skull');
+        // Agregar calavera si no existe
+        if (!iconContainer.querySelector('.skull-emoji')) {
+          var skull = document.createElement('span');
+          skull.className = 'skull-emoji';
+          skull.textContent = '💀';
+          iconContainer.appendChild(skull);
         } else {
-          if (winner.lives > 1) {
-            winner.lives--;
-          } else {
-            users.splice(winnerIndex, 1);
-          }
+          iconContainer.querySelector('.skull-emoji').style.display = 'block';
         }
-
-        spinCount++;
-        if (spinCount % getShuffleInterval() === 0) {
-          shuffleUsers();
-        }
-        drawWheel();
-      }, 5200);
+      } else {
+        btn.classList.remove('skull');
+        var skull = iconContainer.querySelector('.skull-emoji');
+        if (skull) skull.style.display = 'none';
+      }
     }
   </script>
+            </div>
+            <!-- Puntero fijo alineado con el centro del botón -->
+            <div id="fixedPointer"></div>
+            <div id="overflowFooter" class="overflow-footer">© Todos los derechos reservados - 2025 - "Ruleta de la Muerte" by soyGeseg</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  <div id="main" style="display: flex; flex-direction: row; align-items: flex-start; justify-content: center; width: 100%;">
+    <div id="controls">
+      <h3>Agregar participante</h3>
+        <input type="text" id="username" placeholder="Nombre del jugador" style="width: 100%; min-width: 0; margin-bottom: 8px; box-sizing: border-box;" />
+        <div style="display: flex; gap: 10px; align-items: center; width: 100%; min-width: 0;">
+          <input type="number" id="lives" placeholder="Vidas" min="1" size="3" style="flex: 1 1 0; min-width: 0; max-width: 100%; box-sizing: border-box;" />
+          <button id="addUserButton" onclick="addUser()" style="flex: 1 1 0; min-width: 0; max-width: 100%; box-sizing: border-box;">Sentenciar</button>        </div>
+
+      <div style="height: 18px;"></div>
+      <h3>CONFIGURACIONES:</h3>
+      <h4>Modo de elección</h4>
+        <label class="mode-label"><input type="radio" name="mode" value="sudden" onchange="highlightMode()" /> ☠️ MUERTE SÚBITA ☠️</label>
+        <label class="mode-label"><input type="radio" name="mode" value="first" onchange="highlightMode()" /> 👑 EL ELEGIDO 👑</label>
+        <script>
+          // Cambia la palabra y color del título según el modo
+          function updateTitleKeyword() {
+            var mode = document.querySelector('input[name="mode"]:checked')?.value;
+            var keyword = document.getElementById('titleKeyword');
+            if (!keyword) return;
+            if (mode === 'first') {
+              keyword.textContent = 'VICTORIA';
+              keyword.classList.remove('muerte');
+              keyword.classList.add('victoria');
+            } else {
+              keyword.textContent = 'MUERTE';
+              keyword.classList.remove('victoria');
+              keyword.classList.add('muerte');
+            }
+          }
+          // Seleccionar por defecto el modo muerte súbita al cargar y resaltar el seleccionado
+          function highlightMode() {
+            document.querySelectorAll('.mode-label').forEach(function(label) {
+              label.classList.remove('selected');
+            });
+            var checked = document.querySelector('input[name="mode"]:checked');
+            if (checked) {
+              checked.parentElement.classList.add('selected');
+            }
+            updateTitleKeyword();
+          }
+          window.addEventListener('DOMContentLoaded', function() {
+            var sudden = document.querySelector('input[name="mode"][value="sudden"]');
+            if (sudden) sudden.checked = true;
+            highlightMode();
+            document.querySelectorAll('input[name="mode"]').forEach(function(radio) {
+              radio.addEventListener('change', highlightMode);
+            });
+          });
+        </script>
+
+      <h4>Tiempo de ansiedad</h4>
+        <div style="display: flex; gap: 10px; align-items: center; width: 100%; min-width: 0; margin-top: 4px;">
+          <input type="number" id="spinTime" placeholder="Segundos" style="flex: 1 1 0; min-width: 0; max-width: 100%; box-sizing: border-box;" />
+          <button onclick="setSpinTime()" style="flex: 1 1 0; min-width: 0; max-width: 100%; box-sizing: border-box;">Establecer</button>
+        </div>
+      <h4>Intercambiar posiciones</h4>
+          <button onclick="shufflePlayers()" id="shuffleButton" style="width: 100%; box-sizing: border-box;">Mezclar sacrificios</button>
+
+      <!-- Modal de sobreviviente / elegido -->
+      <div id="survivorModal" style="display:none; opacity:0; transition:opacity 0.3s; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); align-items:center; justify-content:center;">
+        <div style="background:#222; color:#ffe066; border-radius:18px; box-shadow:0 0 32px #000; padding:48px 32px; font-size:2.2rem; font-family:'Pirata One',cursive; text-align:center; max-width:90vw;">
+          <div id="modalTitle" style="font-size:3.2rem; margin-bottom:18px;">👑 ¡SOBREVIVIENTE! 👑</div>
+          <div id="survivorName" style="font-size:2.5rem; margin-bottom:18px;"></div>
+          <button id="closeSurvivorBtn" style="margin-top:12px; font-size:1.3rem; background:#ffe066; color:#222; border:none; border-radius:8px; padding:8px 32px; cursor:pointer; font-family:'Pirata One',cursive;" onclick="window.closeSurvivorModal()">Cerrar</button>
+        </div>
+      </div>
+      <div style="flex:1 1 auto;"></div>
+          <button onclick="resetConfig()" id="resetButton" style="width: 100%; box-sizing: border-box; background-color: #b80000;">Reiniciar</button>
+    </div>
+
+
+    </div>
+    <div id="sidePanel">
+      <h3>Historial de Condenados</h3>
+      <div id="eventHistory"></div>
+    </div>
+  </div>
+
+  <!-- Audios personalizados (usados por el historial de condenados) -->
+  <audio id="loseLifeCustom" src="sources/sounds/lose-life.mp3"></audio>
+  <audio id="eliminadoCustom" src="sources/sounds/death.mp3"></audio>
+  <audio id="ganadorCustom" src="sources/sounds/win-meridia.mp3"></audio>
+  <audio id="suddenWinCustom" src="sources/sounds/win-molagbal.mp3"></audio>
+  <script>
+    // Observador para reproducir sonidos según el mensaje en el historial
+    const eventHistory = document.getElementById('eventHistory');
+    const loseLifeAudio = document.getElementById('loseLifeCustom');
+    const eliminadoAudio = document.getElementById('eliminadoCustom');
+    const ganadorAudio = document.getElementById('ganadorCustom');
+    const suddenWinAudio = document.getElementById('suddenWinCustom');
+    // Helper para reproducir sonido desde el principio
+    function playAudio(audio) {
+      if (!audio) return;
+      try {
+        audio.currentTime = 0;
+        audio.play();
+      } catch (e) {}
+    }
+    // Usar MutationObserver para detectar nuevos mensajes
+    const observer = new MutationObserver(function(mutationsList) {
+      for (const mutation of mutationsList) {
+        for (const node of mutation.addedNodes) {
+          if (node.nodeType === 1 && node.tagName === 'UL') {
+            // Si se crea el ul, observarlo también
+            observer.observe(node, { childList: true });
+          }
+          if (node.nodeType === 1 && node.tagName === 'LI') {
+            const text = node.textContent;
+            if (/☠️|perdió una vida/.test(text)) {
+              playAudio(loseLifeAudio);
+            } else if (/❌|eliminado|fue eliminado/.test(text)) {
+              playAudio(eliminadoAudio);
+            } else if (/👑|ganador|Sobreviviente/.test(text)) {
+              // Si es "Sobreviviente" y el modo es muerte súbita, sonar Molag Bal
+              if (/Sobreviviente/.test(text) && document.querySelector('input[name="mode"]:checked')?.value === 'sudden') {
+                playAudio(suddenWinAudio);
+              } else {
+                playAudio(ganadorAudio);
+              }
+            }
+          }
+        }
+      }
+    });
+    // Observar el historial (o el ul si ya existe)
+    window.addEventListener('DOMContentLoaded', function() {
+      const ul = document.getElementById('eventList');
+      if (ul) {
+        observer.observe(ul, { childList: true });
+      } else if (eventHistory) {
+        observer.observe(eventHistory, { childList: true });
+      }
+    });
+  </script>
+  <script>
+    // Indicador de tiempo de ansiedad removido
+  </script>
+  <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,396 @@
+/* Puntero fijo alineado con el centro del botón girar */
+#fixedPointer {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 35px solid #ffe066;
+  filter: drop-shadow(0 0 8px #ffe06699) drop-shadow(0 0 12px #ffe06644);
+  z-index: 25;
+  pointer-events: none;
+  margin-top: -10px;
+}
+
+/* Marca de agua diagonal repetida */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Fondo con texto repetido e inclinado */
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0 32px,
+    rgba(255,255,255,0.07) 32px 36px,
+    transparent 36px 80px
+  ),
+  repeating-linear-gradient(
+    45deg,
+    transparent 0 0,
+    transparent 0 32px,
+    rgba(255,255,255,0.13) 32px 36px,
+    transparent 36px 80px
+  );
+  /* Capa de texto repetido */
+  /* Usamos un SVG embebido como background-image para texto repetido */
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='80'><text x='0' y='60' font-size='40' font-family='Segoe UI,Arial,sans-serif' fill='rgba(255,255,255,0.09)' transform='rotate(-15 80 40)'>soyGeseg</text></svg>");
+  background-repeat: repeat;
+  background-size: 180px 80px;
+  opacity: 1;
+}
+body {
+  position: relative;
+  z-index: 1;
+  background: radial-gradient(circle at center, #1e0033, #000);
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  margin: 0;
+  /* Quitar height y overflow para que el footer fijo sea visible */
+  /* height: 100vh; */
+  /* overflow: auto; */
+  padding-bottom: 48px; /* espacio para el footer */
+}
+
+#wheelArea .nosifer-title {
+  font-family: 'Nosifer', cursive;
+  font-size: 1.6rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 0 2px 12px #a8002a, 0 0 2px #000;
+}
+#wheelArea .title-keyword.muerte {
+  color: #a8002a;
+  text-shadow: 0 2px 12px #7a0610, 0 0 2px #000;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+#wheelArea .title-keyword.victoria {
+  color: #ffe066;
+  text-shadow: 0 2px 12px #b88600, 0 0 2px #000;
+  transition: color 0.3s, text-shadow 0.3s;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+#controls .mode-label {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+#controls .mode-label.selected {
+  background: #fffbe6;
+  color: #b88600;
+  font-weight: bold;
+  box-shadow: 0 0 0 2px #ffe066;
+}
+
+#main {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1400px;
+  gap: 24px;
+  margin-top: 60px;
+  position: relative;
+  /* Quitar height para evitar solapamiento con el footer */
+  /* height: 100vh; */
+  padding-right: 310px; /* Deja espacio para el panel lateral */
+}
+
+#controls {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-height: calc(100vh - 24px); /* Resta el alto del footer reducido */
+  max-height: calc(100vh - 24px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 220px;
+  background-color: rgba(255, 255, 255, 0.18);
+  border-radius: 0 10px 10px 0;
+  padding: 18px 10px 10px 10px;
+  box-shadow: 4px 0 16px rgba(0,0,0,0.15);
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+  align-items: flex-start;
+  margin-top: 0;
+  z-index: 20;
+  overflow-y: auto;
+}
+
+#sidePanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: auto;
+  min-width: 280px;
+  max-width: 420px;
+  height: calc(100vh - 24px); /* Resta el alto del footer reducido */
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 10px 0 0 10px;
+  padding: 18px 10px 10px 10px;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.15);
+  margin-left: 0;
+  margin-right: 0;
+  z-index: 30;
+  overflow-y: auto;
+  position: fixed;
+  top: 0;
+  right: 10px;
+}
+
+/* Fijar el ancho del historial para evitar que crezca con textos largos */
+#eventHistory {
+  width: 250px;
+  max-width: 250px;
+  min-width: 220px;
+  flex: 1 1 auto;
+  background: rgba(30,0,51,0.82);
+  border-radius: 8px;
+  box-shadow: 0 0 8px #0008;
+  padding: 10px 8px 10px 8px;
+  margin-top: 8px;
+  color: #fff;
+  font-size: 13px;
+  overflow-y: unset;
+  overflow-x: hidden;
+  max-height: none;
+  min-height: 120px;
+  height: auto;
+  transition: background 0.2s;
+}
+@media (max-width: 900px) {
+  #sidePanel {
+    min-width: 140px;
+    max-width: 60vw;
+    padding: 10px 2vw 10px 2vw;
+    right: 0;
+  }
+  #eventHistory {
+    max-width: 90vw;
+    font-size: 12px;
+  }
+}
+#sidePanel h3 {
+  font-size: 1.3rem;
+  margin: 0 0 8px 0;
+  color: #ffe066;
+  text-align: center;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 6px #a8002a, 0 0 2px #000;
+  font-family: 'Pirata One', cursive !important;
+  font-weight: normal;
+}
+#eventHistory ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+#eventHistory li {
+  margin-bottom: 6px;
+  padding: 4px 10px 4px 10px;
+  max-width: 95%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.07);
+  font-size: 0.98em;
+  word-break: break-word;
+  box-shadow: 0 1px 2px #0002;
+  transition: background 0.2s;
+}
+#eventHistory li.add {
+  background: rgba(0, 180, 80, 0.13);
+  color: #baffc9;
+}
+#eventHistory li.lose {
+  background: rgba(255, 180, 0, 0.13);
+  color: #ffe066;
+}
+#eventHistory li.elim {
+  background: rgba(180, 0, 0, 0.13);
+  color: #ffb3b3;
+}
+#eventHistory li.win {
+  background: rgba(0, 120, 255, 0.13);
+  color: #b3e0ff;
+  font-weight: bold;
+}
+#eventHistory li.other {
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+}
+
+#controls h3,
+#controls h4 {
+  grid-column: span 2;
+  margin: 4px 0;
+  text-align: center; /* Centra los títulos */
+  font-family: 'Pirata One', cursive !important;
+}
+
+#addUserButton {
+  background-color: #b80000;
+  color: white;
+}
+#addUserButton:hover {
+  background-color: #a8002a;
+}
+input,
+button {
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+}
+
+input[type="number"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #5a2ea6;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.08s, box-shadow 0.08s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+button:active {
+  transform: scale(0.96);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  filter: brightness(0.92);
+}
+
+.wheel-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+#wheelArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+#wheelArea h1 {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+  margin-top: 0;
+  z-index: 10;
+}
+
+.logo-title {
+  width: 40px;
+  height: 40px;
+}
+
+#wheelContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 32px;
+}
+
+#wheel {
+  width: min(95vw, 82vh);
+  height: min(95vw, 82vh);
+  max-width: 100vw;
+  max-height: 82vh;
+  min-width: 280px;
+  min-height: 280px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  overflow: hidden;
+  position: relative;
+  transition: transform 5s ease-out;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+#spinButton {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  font-size: 0;
+  padding: 0;
+  background-color: #7a0610; /* rojo sangre */
+  color: white;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+
+
+#spinIcon {
+  transition: transform 0.6s cubic-bezier(.4,2,.6,1);
+  display: block;
+  margin: auto;
+  width: 60%;
+  height: 60%;
+}
+#spinButton:active #spinIcon, #spinButton:focus #spinIcon {
+  transform: rotate(360deg);
+}
+#spinButton:hover {
+  background: #a8002a;
+}
+
+footer {
+  width: 100vw;
+  text-align: center;
+  padding: 6px 0 4px 0; /* Reducido a la mitad */
+  font-size: 0.8rem;   /* Más pequeño */
+  color: #ffe066;
+  background: rgba(30,0,51,0.82);
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 50;
+  letter-spacing: 1px;
+  box-shadow: 0 -2px 12px #0008;
+  user-select: none;
+}
